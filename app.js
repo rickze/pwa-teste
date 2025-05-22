@@ -18,9 +18,24 @@ request.onupgradeneeded = (event) => {
 };
 
 function guardarDado(valor) {
+  const partes = valor.split("|").map(p => p.trim());
+
+  if (partes.length !== 4) {
+    console.warn("Formato de QR inválido:", valor);
+    return;
+  }
+
+  const dadoEstruturado = {
+    numero: partes[0],
+    descricao: partes[1],
+    tipo: partes[2],
+    empresa: partes[3],
+    timestamp: new Date().toISOString()
+  };
+
   const tx = db.transaction("dados", "readwrite");
   const store = tx.objectStore("dados");
-  store.add(valor);
+  store.add(dadoEstruturado);
   tx.oncomplete = () => atualizarLista();
 }
 
