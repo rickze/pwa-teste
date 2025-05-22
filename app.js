@@ -1,27 +1,55 @@
-const formulario = document.getElementById('formulario');
-const input = document.getElementById('dado');
-const lista = document.getElementById('lista-dados');
+let db;
+const request = indexedDB.open("PWA_DB", 1);
 
-let dadosGuardados = JSON.parse(localStorage.getItem('dados')) || [];
+request.onerror = () => {
+  console.error("❌ Erro ao abrir IndexedDB");
+};
 
-function atualizarLista() {
-  lista.innerHTML = '';
-  dadosGuardados.forEach((item, i) => {
-    const li = document.createElement('li');
-    li.textContent = `${i + 1}: ${item}`;
-    lista.appendChild(li);
-  });
+request.onsuccess = (event) => {
+  db = event.target.result;
+  atualizarLista();
+};
+
+request.onupgradeneeded = (event) => {
+  db = event.target.result;
+  if (!db.objectStoreNames.contains("dados")) {
+    db.createObjectStore("dados", { autoIncrement: true });
+  }
+};
+
+function guardarDado(valor) {
+  const tx = db.transaction("dados", "readwrite");
+  const store = tx.objectStore("dados");
+  store.add(valor);
+  tx.oncomplete = () => atualizarLista();
 }
 
-formulario.addEventListener('submit', (e) => {
+function atualizarLista() {
+  const lista = document.getElementById("lista-dados");
+  lista.innerHTML = "";
+
+  const tx = db.transaction("dados", "readonly");
+  const store = tx.objectStore("dados");
+  const request = store.openCursor();
+
+  let i = 1;
+  request.onsuccess = (event) => {
+    const cursor = event.target.result;
+    if (cursor) {
+      const li = document.createElement("li");
+      li.textContent = `${i++}: ${cursor.value}`;
+      lista.appendChild(li);
+      cursor.continue();
+    }
+  };
+}
+
+document.getElementById("formulario").addEventListener("submit", (e) => {
   e.preventDefault();
+  const input = document.getElementById("dado");
   const valor = input.value.trim();
   if (valor) {
-    dadosGuardados.push(valor);
-    localStorage.setItem('dados', JSON.stringify(dadosGuardados));
-    input.value = '';
-    atualizarLista();
+    guardarDado(valor);
+    input.value = "";
   }
 });
-
-atualizarLista();
