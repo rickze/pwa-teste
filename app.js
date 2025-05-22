@@ -21,10 +21,22 @@ function guardarDado(valor) {
   const limpo = valor.replace(/^\[QR\]\s*/, ""); // Remove prefixo se existir
   const partes = limpo.split("|").map(p => p.trim());
 
-  if (partes.length !== 4) {
-    console.warn("Formato de QR inválido:", valor);
-    return;
-  }
+  if (partes.length < 4) {
+  console.warn("QR com formato incompleto:", valor);
+  const dadoFallback = {
+    numero: partes[0] || "N/A",
+    descricao: partes[1] || "-",
+    tipo: partes[2] || "-",
+    empresa: partes[3] || "-",
+    timestamp: new Date().toISOString()
+  };
+
+  const tx = db.transaction("dados", "readwrite");
+  const store = tx.objectStore("dados");
+  store.add(dadoFallback);
+  tx.oncomplete = () => atualizarLista();
+  return;
+}
 
   const dadoEstruturado = {
     numero: partes[0],
