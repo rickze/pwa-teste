@@ -174,7 +174,7 @@ document.getElementById("btn-exportar").addEventListener("click", () => {
       return;
     }
 
-    const cabecalhos = ["numero", "descricao", "tipo", "empresa", "timestamp"];
+    const cabecalhos = ["numero", "descricao", "tipo", "empresa", "utilizador", "timestamp"];
     const linhas = [cabecalhos.join(";")];
 
     dados.forEach(item => {
@@ -183,6 +183,7 @@ document.getElementById("btn-exportar").addEventListener("click", () => {
         item.descricao || "",
         item.tipo || "",
         item.empresa || "",
+        item.utilizador || "-",
         item.timestamp || ""
       ];
       linhas.push(linha.join(";"));
@@ -194,7 +195,7 @@ document.getElementById("btn-exportar").addEventListener("click", () => {
 
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", "dados_exportados.csv");
+    link.setAttribute("download", "registos_qr.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
