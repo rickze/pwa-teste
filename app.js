@@ -18,24 +18,28 @@ request.onupgradeneeded = (event) => {
 };
 
 function guardarDado(valor) {
-  const limpo = valor.replace(/^\[QR\]\s*/, ""); // Remove prefixo se existir
+  // Remove prefixo [QR] (com ou sem espaços)
+  const limpo = valor.replace(/^\[QR\]\s*/i, "");
   const partes = limpo.split("|").map(p => p.trim());
 
-  if (partes.length < 4) {
-  console.warn("QR com formato incompleto:", valor);
-  const dadoFallback = {
-    numero: partes[0] || "N/A",
-    descricao: partes[1] || "-",
-    tipo: partes[2] || "-",
-    empresa: partes[3] || "-",
+  if (partes.length !== 4) {
+    console.warn("QR com formato incorreto:", valor);
+    alert("Formato inválido. Esperado: Nº | Descrição | Tipo | Empresa");
+    return;
+  }
+
+  const dadoEstruturado = {
+    numero: partes[0],
+    descricao: partes[1],
+    tipo: partes[2],
+    empresa: partes[3],
     timestamp: new Date().toISOString()
   };
 
   const tx = db.transaction("dados", "readwrite");
   const store = tx.objectStore("dados");
-  store.add(dadoFallback);
+  store.add(dadoEstruturado);
   tx.oncomplete = () => atualizarLista();
-  return;
 }
 
   const dadoEstruturado = {
