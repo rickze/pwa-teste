@@ -18,7 +18,8 @@ request.onupgradeneeded = (event) => {
 };
 
 function guardarDado(valor) {
-  const partes = valor.split("|").map(p => p.trim());
+  const limpo = valor.replace(/^\[QR\]\s*/, ""); // Remove prefixo se existir
+  const partes = limpo.split("|").map(p => p.trim());
 
   if (partes.length !== 4) {
     console.warn("Formato de QR inválido:", valor);
