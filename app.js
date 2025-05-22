@@ -1,4 +1,5 @@
 let db;
+let utilizadorAtual = "";
 const request = indexedDB.open("PWA_DB", 1);
 
 request.onerror = () => {
@@ -18,8 +19,21 @@ request.onupgradeneeded = (event) => {
 };
 
 function guardarDado(valor) {
+  if (!utilizadorAtual) {
+    alert("Utilizador não definido. Por favor, preenche e confirma antes de registar dados.");
+    return;
+  }
   const limpo = valor.replace(/^\[QR\]\s*/i, "");
   const partes = limpo.split("|").map(p => p.trim());
+  const dadoEstruturado = {
+    numero: partes[0],
+    descricao: partes[1],
+    tipo: partes[2],
+    empresa: partes[3],
+    timestamp: new Date().toISOString(),
+    utilizador: utilizadorAtual
+  };
+
 
   if (partes.length !== 4) {
     console.warn("QR com formato incorreto:", valor);
@@ -84,6 +98,7 @@ function atualizarLista() {
         Desc: ${item.descricao} |
         Tipo: ${item.tipo} |
         Empresa: ${item.empresa} |
+        Utilizador: ${item.utilizador || "-"} |
         <button data-id="${id}" class="btn-eliminar">🗑️</button>
         `;
       lista.appendChild(li);
@@ -101,6 +116,21 @@ document.addEventListener("click", (event) => {
       tx.oncomplete = () => atualizarLista();
     }
   }
+});
+document.getElementById("confirmar-utilizador").addEventListener("click", () => {
+  const input = document.getElementById("utilizador");
+  const nome = input.value.trim();
+
+  if (!nome) {
+    alert("Por favor, introduz o nome do utilizador.");
+    return;
+  }
+
+  utilizadorAtual = nome;
+  input.disabled = true;
+  document.getElementById("confirmar-utilizador").disabled = true;
+
+  alert(`Utilizador definido: ${utilizadorAtual}`);
 });
 
 // Submissão manual via formulário
