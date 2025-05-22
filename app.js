@@ -99,3 +99,42 @@ btnQr.addEventListener("click", () => {
     console.error("Erro ao iniciar câmara:", err);
   });
 });
+document.getElementById("btn-exportar").addEventListener("click", () => {
+  const tx = db.transaction("dados", "readonly");
+  const store = tx.objectStore("dados");
+  const request = store.getAll();
+
+  request.onsuccess = () => {
+    const dados = request.result;
+
+    if (!dados.length) {
+      alert("Não existem dados para exportar.");
+      return;
+    }
+
+    const cabecalhos = ["numero", "descricao", "tipo", "empresa", "timestamp"];
+    const linhas = [cabecalhos.join(";")];
+
+    dados.forEach(item => {
+      const linha = [
+        item.numero || "",
+        item.descricao || "",
+        item.tipo || "",
+        item.empresa || "",
+        item.timestamp || ""
+      ];
+      linhas.push(linha.join(";"));
+    });
+
+    const csvContent = linhas.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "dados_exportados.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+});
