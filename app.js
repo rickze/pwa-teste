@@ -66,6 +66,7 @@ function atualizarLista() {
   };
 }
 
+// Submissão manual via formulário
 document.getElementById("formulario").addEventListener("submit", (e) => {
   e.preventDefault();
   const input = document.getElementById("dado");
@@ -75,6 +76,8 @@ document.getElementById("formulario").addEventListener("submit", (e) => {
     input.value = "";
   }
 });
+
+// Leitura de QR code
 const btnQr = document.getElementById("btn-qr");
 btnQr.addEventListener("click", () => {
   const html5QrCode = new Html5Qrcode("leitor-qr");
@@ -87,7 +90,7 @@ btnQr.addEventListener("click", () => {
       console.log("QR lido:", decodedText);
       html5QrCode.stop().then(() => {
         document.getElementById("leitor-qr").innerHTML = "";
-        guardarDado(`[QR] ${decodedText}`);
+        guardarDado(decodedText); // Já removeste o prefixo [QR], mantemos limpo
       });
     },
     (errorMessage) => {
@@ -97,6 +100,8 @@ btnQr.addEventListener("click", () => {
     console.error("Erro ao iniciar câmara:", err);
   });
 });
+
+// Exportação para CSV
 document.getElementById("btn-exportar").addEventListener("click", () => {
   const tx = db.transaction("dados", "readonly");
   const store = tx.objectStore("dados");
