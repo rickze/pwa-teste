@@ -53,3 +53,25 @@ document.getElementById("formulario").addEventListener("submit", (e) => {
     input.value = "";
   }
 });
+const btnQr = document.getElementById("btn-qr");
+btnQr.addEventListener("click", () => {
+  const html5QrCode = new Html5Qrcode("leitor-qr");
+  const config = { fps: 10, qrbox: 250 };
+
+  html5QrCode.start(
+    { facingMode: "environment" },
+    config,
+    (decodedText, decodedResult) => {
+      console.log("QR lido:", decodedText);
+      html5QrCode.stop().then(() => {
+        document.getElementById("leitor-qr").innerHTML = "";
+        guardarDado(`[QR] ${decodedText}`);
+      });
+    },
+    (errorMessage) => {
+      // Ignorar erros normais de leitura
+    }
+  ).catch((err) => {
+    console.error("Erro ao iniciar câmara:", err);
+  });
+});
