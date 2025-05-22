@@ -23,17 +23,9 @@ function guardarDado(valor) {
     alert("Utilizador não definido. Por favor, preenche e confirma antes de registar dados.");
     return;
   }
+
   const limpo = valor.replace(/^\[QR\]\s*/i, "");
   const partes = limpo.split("|").map(p => p.trim());
-  const dadoEstruturado = {
-    numero: partes[0],
-    descricao: partes[1],
-    tipo: partes[2],
-    empresa: partes[3],
-    timestamp: new Date().toISOString(),
-    utilizador: utilizadorAtual
-  };
-
 
   if (partes.length !== 4) {
     console.warn("QR com formato incorreto:", valor);
@@ -43,7 +35,7 @@ function guardarDado(valor) {
 
   const numero = partes[0];
 
-  // Verifica duplicado
+  // Verificar duplicado
   const txCheck = db.transaction("dados", "readonly");
   const storeCheck = txCheck.objectStore("dados");
   const indexRequest = storeCheck.openCursor();
@@ -59,13 +51,13 @@ function guardarDado(valor) {
       }
       cursor.continue();
     } else if (!duplicado) {
-      // Se não encontrou duplicado, guardar normalmente
       const dadoEstruturado = {
         numero: partes[0],
         descricao: partes[1],
         tipo: partes[2],
         empresa: partes[3],
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        utilizador: utilizadorAtual
       };
 
       const tx = db.transaction("dados", "readwrite");
