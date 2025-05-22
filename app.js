@@ -65,7 +65,7 @@ function atualizarLista() {
         Tipo: ${item.tipo} |
         Empresa: ${item.empresa} |
         <button data-id="${id}" class="btn-eliminar">🗑️</button>
-      };
+        `;
       lista.appendChild(li);
       cursor.continue();
     }
