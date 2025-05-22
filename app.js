@@ -42,20 +42,6 @@ function guardarDado(valor) {
   tx.oncomplete = () => atualizarLista();
 }
 
-  const dadoEstruturado = {
-    numero: partes[0],
-    descricao: partes[1],
-    tipo: partes[2],
-    empresa: partes[3],
-    timestamp: new Date().toISOString()
-  };
-
-  const tx = db.transaction("dados", "readwrite");
-  const store = tx.objectStore("dados");
-  store.add(dadoEstruturado);
-  tx.oncomplete = () => atualizarLista();
-}
-
 function atualizarLista() {
   const lista = document.getElementById("lista-dados");
   lista.innerHTML = "";
