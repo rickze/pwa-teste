@@ -51,11 +51,20 @@ function atualizarLista() {
   request.onsuccess = (event) => {
     const cursor = event.target.result;
     if (cursor) {
+      const item = cursor.value;
       const li = document.createElement("li");
-      li.textContent = `${i++}: ${cursor.value}`;
+      li.innerHTML = `
+        <strong>${i++}</strong> |
+        Nº: ${item.numero} |
+        Desc: ${item.descricao} |
+        Tipo: ${item.tipo} |
+        Empresa: ${item.empresa}
+      `;
       lista.appendChild(li);
       cursor.continue();
     }
+  };
+}
   };
 }
 
