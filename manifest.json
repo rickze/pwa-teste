@@ -1,0 +1,24 @@
+{
+  "name": "PWA Teste Local",
+  "short_name": "PWA Teste",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "description": "Teste simples de PWA offline",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "type": "image/png",
+      "sizes": "600x400",
+      "form_factor": "wide"
+    }
+  ]
+}
