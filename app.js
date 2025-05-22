@@ -18,7 +18,6 @@ request.onupgradeneeded = (event) => {
 };
 
 function guardarDado(valor) {
-  // Remove prefixo [QR] (com ou sem espaços)
   const limpo = valor.replace(/^\[QR\]\s*/i, "");
   const partes = limpo.split("|").map(p => p.trim());
 
@@ -28,18 +27,39 @@ function guardarDado(valor) {
     return;
   }
 
-  const dadoEstruturado = {
-    numero: partes[0],
-    descricao: partes[1],
-    tipo: partes[2],
-    empresa: partes[3],
-    timestamp: new Date().toISOString()
-  };
+  const numero = partes[0];
 
-  const tx = db.transaction("dados", "readwrite");
-  const store = tx.objectStore("dados");
-  store.add(dadoEstruturado);
-  tx.oncomplete = () => atualizarLista();
+  // Verifica duplicado
+  const txCheck = db.transaction("dados", "readonly");
+  const storeCheck = txCheck.objectStore("dados");
+  const indexRequest = storeCheck.openCursor();
+  let duplicado = false;
+
+  indexRequest.onsuccess = (event) => {
+    const cursor = event.target.result;
+    if (cursor) {
+      if (cursor.value.numero === numero) {
+        duplicado = true;
+        alert(`O registo com número "${numero}" já existe.`);
+        return;
+      }
+      cursor.continue();
+    } else if (!duplicado) {
+      // Se não encontrou duplicado, guardar normalmente
+      const dadoEstruturado = {
+        numero: partes[0],
+        descricao: partes[1],
+        tipo: partes[2],
+        empresa: partes[3],
+        timestamp: new Date().toISOString()
+      };
+
+      const tx = db.transaction("dados", "readwrite");
+      const store = tx.objectStore("dados");
+      store.add(dadoEstruturado);
+      tx.oncomplete = () => atualizarLista();
+    }
+  };
 }
 
 function atualizarLista() {
