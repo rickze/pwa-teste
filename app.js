@@ -69,19 +69,33 @@ function atualizarLista() {
     const cursor = event.target.result;
     if (cursor) {
       const item = cursor.value;
+      const id = cursor.key;
+
       const li = document.createElement("li");
       li.innerHTML = `
         <strong>${i++}</strong> |
         Nº: ${item.numero} |
         Desc: ${item.descricao} |
         Tipo: ${item.tipo} |
-        Empresa: ${item.empresa}
+        Empresa: ${item.empresa} |
+        <button data-id="${id}" class="btn-eliminar">🗑️</button>
       `;
       lista.appendChild(li);
       cursor.continue();
     }
   };
 }
+document.addEventListener("click", (event) => {
+  if (event.target.classList.contains("btn-eliminar")) {
+    const id = Number(event.target.getAttribute("data-id"));
+    if (confirm("Eliminar este registo?")) {
+      const tx = db.transaction("dados", "readwrite");
+      const store = tx.objectStore("dados");
+      store.delete(id);
+      tx.oncomplete = () => atualizarLista();
+    }
+  }
+});
 
 // Submissão manual via formulário
 document.getElementById("formulario").addEventListener("submit", (e) => {
