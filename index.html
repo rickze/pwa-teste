@@ -16,13 +16,13 @@
   <hr />
   <div id="leitor-qr" style="width: 300px;"></div>
   <button id="btn-qr">Ler QR Code</button>
+  <button id="btn-exportar">Exportar para CSV</button>
+  <script src="app.js"></script>
   <form id="formulario">
     <button type="submit"<Guardar</button>
   </from>
   <h2>Dados Guardados:</h2>
   <ul id="lista-dados"></ul>
-  <button id="btn-exportar">Exportar para CSV</button>
-  <script src="app.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
