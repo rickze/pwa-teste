@@ -125,17 +125,6 @@ document.getElementById("confirmar-utilizador").addEventListener("click", () => 
   alert(`Utilizador definido: ${utilizadorAtual}`);
 });
 
-// Submissão manual via formulário
-document.getElementById("formulario").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const input = document.getElementById("dado");
-  const valor = input.value.trim();
-  if (valor) {
-    guardarDado(valor);
-    input.value = "";
-  }
-});
-
 // Leitura de QR code
 const btnQr = document.getElementById("btn-qr");
 btnQr.addEventListener("click", () => {
