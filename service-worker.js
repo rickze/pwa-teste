@@ -3,6 +3,7 @@ const urlsToCache = [
   './',
   './index.html',
   './app.js',
+  './html5-qrcode.min.js',  // <-- Adicionar esta linha
   './manifest.json',
   './icon-192.png',
   './screenshot1.png'
