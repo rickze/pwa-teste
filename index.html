@@ -7,28 +7,47 @@
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#ffffff" />
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <style>
+    button { margin-top: 10px; }
+  </style>
 </head>
 <body>
   <h1>Leitor de QR Code</h1>
+
   <label for="utilizador">Utilizador:</label>
   <input type="text" id="utilizador" placeholder="Nome do utilizador" required />
   <button id="confirmar-utilizador">Confirmar</button>
+
   <hr />
+
   <div id="leitor-qr" style="width: 300px;"></div>
-  <button id="btn-qr">Ler QR Code</button>
+
+  <button id="btn-qr">Ler QR Code</button><br />
   <button id="btn-exportar">Exportar para CSV</button>
-  <script src="app.js"></script>
+
   <form id="formulario">
-    <button type="submit"<Guardar</button>
-  </from>
+    <button type="submit">Guardar</button>
+  </form>
+
   <h2>Dados Guardados:</h2>
   <ul id="lista-dados"></ul>
+
+  <script src="app.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(() => console.log('Service Worker registado'))
         .catch((erro) => console.error('Falha ao registar SW:', erro));
     }
+
+    document.getElementById('confirmar-utilizador').addEventListener('click', () => {
+      const nome = document.getElementById('utilizador').value.trim();
+      if (!nome) {
+        alert('Por favor, insira um nome válido.');
+      } else {
+        alert(`Utilizador ${nome} confirmado.`);
+      }
+    });
   </script>
 </body>
 </html>
