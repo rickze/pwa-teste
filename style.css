@@ -33,3 +33,23 @@ ul {
   max-width: 400px;
   margin: auto;
 }
+#topo-app {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#utilizador-logado {
+  font-weight: bold;
+  color: #333;
+}
+
+#btn-logout {
+  padding: 5px 10px;
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
