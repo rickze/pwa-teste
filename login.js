@@ -6,87 +6,89 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginBtn = document.getElementById("login-btn");
   const guardarNovaPwBtn = document.getElementById("guardar-nova-password");
 
-  let utilizadores = [];
   let utilizadorAtual = null;
-
-  fetch("users.json")
-    .then(res => res.json())
-    .then(data => {
-      utilizadores = data;
-
-      const usernameGuardado = localStorage.getItem("utilizador");
-      if (usernameGuardado) {
-        utilizadorAtual = utilizadores.find(u => u.username === usernameGuardado);
-        if (utilizadorAtual && !utilizadorAtual.primeiro_login) {
-          mostrarApp(utilizadorAtual.username);
-        }
-      }
-    });
 
   loginBtn.addEventListener("click", () => {
     const username = document.getElementById("login-username").value.trim();
     const password = document.getElementById("login-password").value.trim();
 
-    const user = utilizadores.find(u => u.username === username && u.password === password);
+    fetch("https://nyscrldksholckwexdsc.supabase.co/rest/v1/utilizadores?user=eq." + encodeURIComponent(username) + "&select=*", {
+      headers: {
+        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTQ3MDMsImV4cCI6MjA2MzkzMDcwM30.UyF6P7j2b7tdRanWWj6T58haubt2IYiLhmx6xnwYXpE",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTQ3MDMsImV4cCI6MjA2MzkzMDcwM30.UyF6P7j2b7tdRanWWj6T58haubt2IYiLhmx6xnwYXpE"
+      }
+    })
+    .then(res => res.json())
+    .then(users => {
+      const user = users.find(u => u.pass === password);
 
-    if (!user) {
-      alert("Credenciais inválidas.");
-      return;
-    }
+      if (!user) {
+        alert("Credenciais inválidas.");
+        return;
+      }
 
-    utilizadorAtual = user;
+      utilizadorAtual = user;
 
-    if (user.primeiro_login) {
-      loginScreen.style.display = "none";
-      alterarPwScreen.style.display = "block";
-      document.getElementById("user-display").innerText = `Utilizador: ${user.username}`;
-    } else {
-      localStorage.setItem("utilizador", user.username);
-      mostrarApp(user.username);
-    }
+      if (user.primeiro_login) {
+        loginScreen.style.display = "none";
+        alterarPwScreen.style.display = "block";
+        document.getElementById("user-display").innerText = `Utilizador: ${user.user}`;
+      } else {
+        localStorage.setItem("utilizador", user.user);
+        mostrarApp(user.user);
+      }
+    })
+    .catch(err => {
+      console.error("Erro ao autenticar:", err);
+      alert("Erro ao ligar à base de dados.");
+    });
   });
 
   guardarNovaPwBtn.addEventListener("click", () => {
-		const novaPw = document.getElementById("nova-password").value.trim();
-		const confirmarPw = document.getElementById("confirmar-password").value.trim();
+    const novaPw = document.getElementById("nova-password").value.trim();
+    const confirmarPw = document.getElementById("confirmar-password").value.trim();
 
-		if (!novaPw || novaPw.length < 4) {
-			alert("A nova palavra-passe deve ter pelo menos 4 caracteres.");
-			return;
-		}
+    if (!novaPw || novaPw.length < 4) {
+      alert("A nova palavra-passe deve ter pelo menos 4 caracteres.");
+      return;
+    }
 
-		if (novaPw !== confirmarPw) {
-			alert("As palavras-passe não coincidem.");
-			return;
-		}
+    if (novaPw !== confirmarPw) {
+      alert("As palavras-passe não coincidem.");
+      return;
+    }
 
-		utilizadorAtual.password = novaPw;
-		utilizadorAtual.primeiro_login = false;
-
-		// Atualizar lista completa
-		const index = utilizadores.findIndex(u => u.username === utilizadorAtual.username);
-		if (index !== -1) {
-			utilizadores[index] = utilizadorAtual;
-			localStorage.setItem("users", JSON.stringify(utilizadores));
-		}
-
-		localStorage.setItem("utilizador", utilizadorAtual.username);
-
-		alert("Palavra-passe atualizada.");
-		alterarPwScreen.style.display = "none";
-		mostrarApp(utilizadorAtual.username);
-});
-
+    fetch("https://nyscrldksholckwexdsc.supabase.co/rest/v1/utilizadores?id=eq." + encodeURIComponent(utilizadorAtual.id), {
+      method: "PATCH",
+      headers: {
+        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTQ3MDMsImV4cCI6MjA2MzkzMDcwM30.UyF6P7j2b7tdRanWWj6T58haubt2IYiLhmx6xnwYXpE",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTQ3MDMsImV4cCI6MjA2MzkzMDcwM30.UyF6P7j2b7tdRanWWj6T58haubt2IYiLhmx6xnwYXpE",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        pass: novaPw,
+        primeiro_login: false
+      })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("Erro ao atualizar password.");
+      localStorage.setItem("utilizador", utilizadorAtual.user);
+      alert("Palavra-passe atualizada.");
+      alterarPwScreen.style.display = "none";
+      mostrarApp(utilizadorAtual.user);
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Não foi possível guardar a nova palavra-passe.");
+    });
+  });
 
   function mostrarApp(username) {
     loginScreen.style.display = "none";
     alterarPwScreen.style.display = "none";
     app.style.display = "block";
-
     document.getElementById("utilizador-logado").innerText = `Utilizador: ${username}`;
-    // app.js pode agora usar localStorage.getItem("utilizador") para continuar
-		// ⚠️ Ativar botão QR após login
-		const btnQr = document.getElementById("btn-qr");
-		btnQr.disabled = false;
+    const btnQr = document.getElementById("btn-qr");
+    btnQr.disabled = false;
   }
 });
