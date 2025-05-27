@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
       method: "PATCH",
       headers: {
         "apikey": SUPABASE_key,
-        "Authorization": SUPABASE_AUT
+        "Authorization": SUPABASE_AUT,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
