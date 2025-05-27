@@ -1,36 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
-  let db;
-  let html5QrCode;
   const utilizadorAtual = localStorage.getItem("utilizador");
-
   const btnQr = document.getElementById("btn-qr");
   const btnExportar = document.getElementById("btn-exportar");
+  const lista = document.getElementById("lista-dados");
+  let html5QrCode;
 
   btnQr.disabled = !utilizadorAtual;
   btnExportar.disabled = true;
 
   if (!utilizadorAtual) {
-    console.warn("Utilizador não autenticado. Interface bloqueada.");
+    console.warn("Utilizador não autenticado.");
     return;
   }
 
-  const request = indexedDB.open("PWA_DB", 1);
-
-  request.onerror = () => {
-    console.error("❌ Erro ao abrir IndexedDB");
-  };
-
-  request.onsuccess = (event) => {
-    db = event.target.result;
-    atualizarLista();
-  };
-
-  request.onupgradeneeded = (event) => {
-    db = event.target.result;
-    if (!db.objectStoreNames.contains("dados")) {
-      db.createObjectStore("dados", { autoIncrement: true });
-    }
-  };
+  atualizarLista();
 
   btnQr.addEventListener("click", () => {
     const qrContainer = document.getElementById("leitor-qr");
@@ -81,99 +64,74 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const numero = partes[0];
-
-    const txCheck = db.transaction("dados", "readonly");
-    const storeCheck = txCheck.objectStore("dados");
-    const indexRequest = storeCheck.openCursor();
-
-    let duplicado = false;
-
-    indexRequest.onsuccess = (event) => {
-      const cursor = event.target.result;
-      if (cursor) {
-        if (cursor.value.numero === numero) {
-          duplicado = true;
-          alert(`O registo com número "${numero}" já existe.`);
-          return;
-        }
-        cursor.continue();
-      } else if (!duplicado) {
-        const dado = {
-          numero: partes[0],
-          descricao: partes[1],
-          tipo: partes[2],
-          empresa: partes[3],
-          timestamp: new Date().toISOString(),
-          utilizador: utilizadorAtual
-        };
-
-        const tx = db.transaction("dados", "readwrite");
-        const store = tx.objectStore("dados");
-        store.add(dado);
-        tx.oncomplete = () => atualizarLista();
-      }
+    const dado = {
+      numero: partes[0],
+      descricao: partes[1],
+      tipo: partes[2],
+      empresa: partes[3],
+      utilizador: utilizadorAtual,
+      timestamp: new Date().toISOString()
     };
+
+    fetch("https://nyscrldksholckwexdsc.supabase.co/rest/v1/dados", {
+      method: "POST",
+      headers: {
+        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTQ3MDMsImV4cCI6MjA2MzkzMDcwM30.UyF6P7j2b7tdRanWWj6T58haubt2IYiLhmx6xnwYXpE",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTQ3MDMsImV4cCI6MjA2MzkzMDcwM30.UyF6P7j2b7tdRanWWj6T58haubt2IYiLhmx6xnwYXpE",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+      },
+      body: JSON.stringify(dado)
+    })
+    .then(res => res.json())
+    .then(() => atualizarLista())
+    .catch(err => {
+      console.error("Erro ao guardar:", err);
+      alert("Erro ao guardar o registo.");
+    });
   }
 
   function atualizarLista() {
-    const lista = document.getElementById("lista-dados");
     lista.innerHTML = "";
 
-    const tx = db.transaction("dados", "readonly");
-    const store = tx.objectStore("dados");
-    const request = store.openCursor();
-
-    let i = 1;
-    let encontrouDados = false;
-
-    request.onsuccess = (event) => {
-      const cursor = event.target.result;
-
-      if (cursor) {
-        const item = cursor.value;
-        if (item.utilizador === utilizadorAtual) {
-          encontrouDados = true;
-
-          const id = cursor.key;
-          const li = document.createElement("li");
-          li.innerHTML = `
-            <strong>${i++}</strong> |
-            Nº: ${item.numero} |
-            Desc: ${item.descricao} |
-            Tipo: ${item.tipo} |
-            Empresa: ${item.empresa} |
-            Utilizador: ${item.utilizador || "-"} |
-            <button data-id="${id}" class="btn-eliminar">🗑️</button>
-          `;
-          lista.appendChild(li);
-        }
-        cursor.continue();
-      } else {
-        btnExportar.disabled = !encontrouDados;
+    fetch("https://nyscrldksholckwexdsc.supabase.co/rest/v1/dados?utilizador=eq." + encodeURIComponent(utilizadorAtual), {
+      headers: {
+        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTQ3MDMsImV4cCI6MjA2MzkzMDcwM30.UyF6P7j2b7tdRanWWj6T58haubt2IYiLhmx6xnwYXpE",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTQ3MDMsImV4cCI6MjA2MzkzMDcwM30.UyF6P7j2b7tdRanWWj6T58haubt2IYiLhmx6xnwYXpE"
       }
-    };
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (!data.length) {
+        btnExportar.disabled = true;
+        return;
+      }
+
+      btnExportar.disabled = false;
+      data.forEach((item, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${i + 1}</strong> |
+          Nº: ${item.numero} |
+          Desc: ${item.descricao} |
+          Tipo: ${item.tipo} |
+          Empresa: ${item.empresa} |
+          Utilizador: ${item.utilizador || "-"}
+        `;
+        lista.appendChild(li);
+      });
+    });
   }
 
-  document.addEventListener("click", (event) => {
-    if (event.target.classList.contains("btn-eliminar")) {
-      const id = Number(event.target.getAttribute("data-id"));
-      if (confirm("Eliminar este registo?")) {
-        const tx = db.transaction("dados", "readwrite");
-        const store = tx.objectStore("dados");
-        store.delete(id);
-        tx.oncomplete = () => atualizarLista();
-      }
-    }
-  });
-
   btnExportar.addEventListener("click", () => {
-    const tx = db.transaction("dados", "readonly");
-    const store = tx.objectStore("dados");
-    const request = store.getAll();
-
-    request.onsuccess = () => {
-      const dados = request.result.filter(d => d.utilizador === utilizadorAtual);
+    fetch("https://nyscrldksholckwexdsc.supabase.co/rest/v1/dados?utilizador=eq." + encodeURIComponent(utilizadorAtual), {
+      headers: {
+        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTQ3MDMsImV4cCI6MjA2MzkzMDcwM30.UyF6P7j2b7tdRanWWj6T58haubt2IYiLhmx6xnwYXpE",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTQ3MDMsImV4cCI6MjA2MzkzMDcwM30.UyF6P7j2b7tdRanWWj6T58haubt2IYiLhmx6xnwYXpE"
+      }
+    })
+    .then(res => res.json())
+    .then(dados => {
       if (!dados.length) {
         alert("Não existem dados para exportar.");
         return;
@@ -204,7 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    };
+    });
   });
-
 });
