@@ -186,4 +186,22 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.removeChild(link);
     });
   });
+  document.addEventListener("click", (event) => {
+  if (event.target.classList.contains("btn-eliminar")) {
+    const id = event.target.getAttribute("data-id");
+    if (confirm("Eliminar este registo?")) {
+      fetch(`https://nyscrldksholckwexdsc.supabase.co/rest/v1/dados?id=eq.${id}`, {
+        method: "DELETE",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": SUPABASE_AUT
+        }
+      })
+      .then(() => atualizarLista())
+      .catch(err => {
+        console.error("Erro ao eliminar:", err);
+        alert("Erro ao eliminar o registo.");
+      });
+    }
+  }
 });
