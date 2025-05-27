@@ -77,21 +77,37 @@ document.addEventListener('DOMContentLoaded', () => {
       timestamp: new Date().toISOString()
     };
 
-    fetch("https://nyscrldksholckwexdsc.supabase.co/rest/v1/dados", {
-      method: "POST",
+    // Verificar duplicado antes de guardar
+    fetch(`https://nyscrldksholckwexdsc.supabase.co/rest/v1/dados?numero=eq.${encodeURIComponent(dado.numero)}&utilizador=eq.${encodeURIComponent(dado.utilizador)}`, {
       headers: {
         "apikey": SUPABASE_KEY,
-        "Authorization": SUPABASE_AUT,
-        "Content-Type": "application/json",
-        "Prefer": "return=representation"
-      },
-      body: JSON.stringify(dado)
+        "Authorization": SUPABASE_AUT
+      }
     })
     .then(res => res.json())
-    .then(() => atualizarLista())
-    .catch(err => {
-      console.error("Erro ao guardar:", err);
-      alert("Erro ao guardar o registo.");
+    .then(registos => {
+      if (registos.length > 0) {
+        alert(`O número "${dado.numero}" já existe para este utilizador.`);
+        return;
+      }
+    
+      // Se não existir, então grava
+      fetch("https://nyscrldksholckwexdsc.supabase.co/rest/v1/dados", {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": SUPABASE_AUT,
+          "Content-Type": "application/json",
+          "Prefer": "return=representation"
+        },
+        body: JSON.stringify(dado)
+      })
+      .then(res => res.json())
+      .then(() => atualizarLista())
+      .catch(err => {
+        console.error("Erro ao guardar:", err);
+        alert("Erro ao guardar o registo.");
+      });
     });
   }
 
