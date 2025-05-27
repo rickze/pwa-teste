@@ -1,0 +1,4 @@
+Iniciar servidor:
+
+Iniciar servidor nesta pasta
+Comando: python -m http.server

@@ -1,0 +1,13 @@
+
+[
+  {
+    "username": "admin",
+    "password": "admin123",
+    "primeiro_login": false
+  },
+  {
+    "username": "maria",
+    "password": "maria123",
+    "primeiro_login": true
+  }
+]

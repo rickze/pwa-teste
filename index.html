@@ -1,49 +1,42 @@
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PWA Teste Local</title>
+  <title>Leitor QR - Login</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#ffffff" />
   <script src="html5-qrcode.min.js"></script>
-  <style>
-    button { margin-top: 10px; }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Leitor de QR Code</h1>
+  <div id="login-screen">
+    <h2>Login</h2>
+    <input type="text" id="login-username" placeholder="Utilizador" required />
+    <input type="password" id="login-password" placeholder="Palavra-passe" required />
+    <button id="login-btn">Entrar</button>
+  </div>
 
-  <label for="utilizador">Utilizador:</label>
-  <input type="text" id="utilizador" placeholder="Nome do utilizador" required />
-  <button id="confirmar-utilizador">Confirmar</button>
+  <div id="alterar-password-screen" style="display: none;">
+    <h2>Alterar palavra-passe</h2>
+    <p id="user-display"></p>
+    <input type="password" id="nova-password" placeholder="Nova palavra-passe" required />
+    <input type="password" id="confirmar-password" placeholder="Confirmar nova palavra-passe" required />
+    <button id="guardar-nova-password">Guardar</button>
+  </div>
 
-  <hr />
+  <div id="app" style="display: none;">
+    <h1>Leitor de QR Code</h1>
+    <p id="utilizador-logado"></p>
+    <div id="leitor-qr" style="width: 300px;"></div>
+    <button id="btn-qr">Ler QR Code</button><br />
+    <button id="btn-exportar">Exportar para CSV</button>
+    <h2>Dados Guardados:</h2>
+    <ul id="lista-dados"></ul>
+  </div>
 
-  <div id="leitor-qr" style="width: 300px;"></div>
-
-  <button id="btn-qr">Ler QR Code</button><br />
-  <button id="btn-exportar">Exportar para CSV</button>
-
-  <h2>Dados Guardados:</h2>
-  <ul id="lista-dados"></ul>
-
+  <script src="login.js"></script>
   <script src="app.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(() => console.log('Service Worker registado'))
-        .catch((erro) => console.error('Falha ao registar SW:', erro));
-    }
-
-    document.getElementById('confirmar-utilizador').addEventListener('click', () => {
-      const nome = document.getElementById('utilizador').value.trim();
-      if (!nome) {
-        alert('Por favor, insira um nome válido.');
-      } else {
-        alert(`Utilizador ${nome} confirmado.`);
-      }
-    });
-  </script>
 </body>
 </html>
