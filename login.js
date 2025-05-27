@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch("https://nyscrldksholckwexdsc.supabase.co/rest/v1/utilizadores?id=eq." + encodeURIComponent(utilizadorAtual.id), {
       method: "PATCH",
       headers: {
-        "apikey": SUPABASE_key,
+        "apikey": SUPABASE_KEY,
         "Authorization": SUPABASE_AUT,
         "Content-Type": "application/json"
       },
