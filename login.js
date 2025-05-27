@@ -96,8 +96,17 @@ document.addEventListener('DOMContentLoaded', () => {
     loginScreen.style.display = "none";
     alterarPwScreen.style.display = "none";
     app.style.display = "block";
+  
     document.getElementById("utilizador-logado").innerText = `Utilizador: ${username}`;
+  
     const btnQr = document.getElementById("btn-qr");
     btnQr.disabled = false;
+  
+    document.getElementById("btn-logout").addEventListener("click", () => {
+      if (confirm("Deseja terminar sessão?")) {
+        localStorage.removeItem("utilizador");
+        location.reload();
+      }
+    });
   }
-});
+
