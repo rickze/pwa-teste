@@ -11,39 +11,44 @@ document.addEventListener('DOMContentLoaded', () => {
   loginBtn.addEventListener("click", () => {
     const username = document.getElementById("login-username").value.trim();
     const password = document.getElementById("login-password").value.trim();
-    
-    fetch(`${supabaseUrl}/rest/v1/utilizadores?user=eq.${encodeURIComponent(username)}&select=*`, {
+  
+    fetch("https://nyscrldksholckwexdsc.supabase.co/rest/v1/utilizadores?user=eq." + encodeURIComponent(username) + "&select=*", {
       headers: {
         "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTQ3MDMsImV4cCI6MjA2MzkzMDcwM30.UyF6P7j2b7tdRanWWj6T58haubt2IYiLhmx6xnwYXpE",
-        "Authorization": "Bearer ${Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODM1NDcwMywiZXhwIjoyMDYzOTMwNzAzfQ.nd9SNwTR8v-jkkEy3uCobiBF0srzo2_ndv71PG7qL5M}"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODM1NDcwMywiZXhwIjoyMDYzOTMwNzAzfQ.nd9SNwTR8v-jkkEy3uCobiBF0srzo2_ndv71PG7qL5M"
       }
     })
     .then(res => res.json())
     .then(users => {
       console.log("Utilizadores encontrados:", users);
       console.log("Password digitada:", password);
-    
+  
       if (!users.length) {
         alert("Utilizador não encontrado.");
         return;
       }
-    
+  
       const user = users[0];
-    
+  
       if (user.pass !== password) {
         alert("Password incorreta.");
         return;
       }
-    
+  
       // OK: login válido
+      utilizadorAtual = user;
       localStorage.setItem("utilizador", user.user);
-    
+  
       if (user.primeiro_login) {
-        // Mostrar alteração de password
+        loginScreen.style.display = "none";
+        alterarPwScreen.style.display = "block";
+        document.getElementById("user-display").innerText = `Utilizador: ${user.user}`;
       } else {
-        // Mostrar app
+        mostrarApp(user.user);
       }
     });
+  });
+
 
   guardarNovaPwBtn.addEventListener("click", () => {
     const novaPw = document.getElementById("nova-password").value.trim();
