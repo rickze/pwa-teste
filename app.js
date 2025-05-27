@@ -131,12 +131,12 @@ document.addEventListener('DOMContentLoaded', () => {
       data.forEach((item, i) => {
         const li = document.createElement("li");
         li.innerHTML = `
-          <strong>${i + 1}</strong> |
-          Nº: ${item.numero} |
-          Desc: ${item.descricao} |
-          Tipo: ${item.tipo} |
-          Empresa: ${item.empresa} |
-          Utilizador: ${item.utilizador || "-"}
+          <strong>${i + 1}</strong><br />
+          Nº: ${item.numero}<br />
+          Desc: ${item.descricao}<br />
+          Tipo: ${item.tipo}<br />
+          Empresa: ${item.empresa}<br />
+          Utilizador: ${item.utilizador || "-"}<br /><hr />
         `;
         lista.appendChild(li);
       });
