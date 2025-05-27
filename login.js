@@ -20,7 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .then(res => res.json())
     .then(users => {
+      console.log("Utilizadores encontrados:", users);
+      console.log("Password digitada:", password);
       const user = users.find(u => u.pass === password);
+      
 
       if (!user) {
         alert("Credenciais inválidas.");
