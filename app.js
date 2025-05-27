@@ -136,7 +136,9 @@ document.addEventListener('DOMContentLoaded', () => {
           Desc: ${item.descricao}<br />
           Tipo: ${item.tipo}<br />
           Empresa: ${item.empresa}<br />
-          Utilizador: ${item.utilizador || "-"}<br /><hr />
+          Utilizador: ${item.utilizador || "-"}<br />
+          <button data-id="${item.id}" class="btn-eliminar">🗑️ Eliminar</button>
+          <hr />
         `;
         lista.appendChild(li);
       });
