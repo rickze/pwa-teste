@@ -11,10 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let html5QrCode;
   let empresaAtual = "";
 
-  iif (utilizadorGuardado) {
-    mostrarApp(utilizadorGuardado); // Mostra app corretamente
+  if (utilizadorAtual) {
+    mostrarApp(utilizadorAtual);
   } else {
-    document.getElementById("login-screen").style.display = "block"; // Mostra login
+    document.getElementById("login-screen").style.display = "block";
   }
     
   empresaSelect.addEventListener("change", (e) => {
