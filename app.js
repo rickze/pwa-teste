@@ -104,6 +104,16 @@ document.addEventListener('DOMContentLoaded', () => {
       alert("Formato inválido. Esperado: Nº | Descrição | Tipo | Empresa");
       return;
     }
+    // 🔒 Validação por empresa
+    if (!empresaAtual) {
+      alert("Por favor, selecione uma empresa antes de registar o QR code.");
+      return;
+    }
+  
+    if (partes[3] !== empresaAtual) {
+      alert(`O QR code pertence à empresa "${partes[3]}", mas selecionaste "${empresaAtual}".`);
+      return;
+    }
 
     const dado = {
       numero: partes[0],
