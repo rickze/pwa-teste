@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const loginBtn = document.getElementById("login-btn");
   const guardarNovaPwBtn = document.getElementById("guardar-nova-password");
+  const SUPABASE_URL = "https://nyscrldksholckwexdsc.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTQ3MDMsImV4cCI6MjA2MzkzMDcwM30.UyF6P7j2b7tdRanWWj6T58haubt2IYiLhmx6xnwYXpE";
+
 
   let utilizadorAtual = null;
 
