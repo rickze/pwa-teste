@@ -1,39 +1,29 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const SUPABASE_AUT = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODM1NDcwMywiZXhwIjoyMDYzOTMwNzAzfQ.nd9SNwTR8v-jkkEy3uCobiBF0srzo2_ndv71PG7qL5M";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTQ3MDMsImV4cCI6MjA2MzkzMDcwM30.UyF6P7j2b7tdRanWWj6T58haubt2IYiLhmx6xnwYXpE";
+  const SUPABASE_AUT = "Bearer ..."; // mantém o teu valor
+  const SUPABASE_KEY = "eyJhbGciOiJI..."; // mantém o teu valor
 
   const usernameGuardado = localStorage.getItem("utilizador");
-    
-  if (usernameGuardado) {
-    mostrarApp(usernameGuardado);
-  } else {
+  const empresaGuardada = localStorage.getItem("empresa");
+
+  if (!usernameGuardado) {
     document.getElementById("login-screen").style.display = "block";
+    return;
   }
-  
-  function mostrarApp(utilizadorAtual) {
+
+  mostrarApp(usernameGuardado, empresaGuardada);
+
+  function mostrarApp(utilizadorAtual, empresaInicial) {
     document.getElementById("login-screen").style.display = "none";
     document.getElementById("app").style.display = "block";
     document.getElementById("utilizador-logado").innerText = `Utilizador: ${utilizadorAtual}`;
-    
+
     const btnQr = document.getElementById("btn-qr");
     const btnExportar = document.getElementById("btn-exportar");
     const lista = document.getElementById("lista-dados");
     const empresaSelect = document.getElementById("empresa-select");
-
     let html5QrCode;
-    let empresaAtual = "";
-    
-    // empresaSelect.addEventListener("change", (e) => {
-    //   empresaAtual = e.target.value;
-    //   localStorage.setItem("empresa", empresaAtual);
-    //    // Podes guardar em localStorage se quiseres:
-    //   localStorage.setItem("empresa", empresaAtual);
-    // });
-    // // Repõe a empresa guardada, se houver
-    // empresaAtual = localStorage.getItem("empresa") || "";
-    // if (empresaAtual) {
-    //   empresaSelect.value = empresaAtual;
-    // }
+    let empresaAtual = empresaInicial || "";
+
     // Preencher dropdown de empresas
     fetch("https://nyscrldksholckwexdsc.supabase.co/rest/v1/empresas?select=empresa,nome_empresa", {
       headers: {
@@ -43,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .then(res => res.json())
     .then(empresas => {
+      empresaSelect.innerHTML = '<option value="">-- Selecione a empresa --</option>';
       empresas.forEach(e => {
         const option = document.createElement("option");
         option.value = e.empresa;
@@ -50,50 +41,25 @@ document.addEventListener('DOMContentLoaded', () => {
         empresaSelect.appendChild(option);
       });
 
-      if (empresaAtual) empresaSelect.value = empresaAtual;
-    });
+      if (empresaAtual) {
+        empresaSelect.value = empresaAtual;
+      }
 
-    empresaSelect.addEventListener("change", (e) => {
-      empresaAtual = e.target.value;
-      localStorage.setItem("empresa", empresaAtual);
+      empresaSelect.addEventListener("change", (e) => {
+        empresaAtual = e.target.value;
+        localStorage.setItem("empresa", empresaAtual);
+      });
     });
 
     btnQr.disabled = !utilizadorAtual;
     btnExportar.disabled = true;
 
-    if (!utilizadorAtual) {
-      console.warn("Utilizador não autenticado.");
-      return;
-    }
-    // Preencher dropdown com empresas
-    fetch("https://nyscrldksholckwexdsc.supabase.co/rest/v1/empresas?select=empresa,nome_empresa", {
-      headers: {
-        "apikey": SUPABASE_KEY,
-        "Authorization": SUPABASE_AUT
-      }
-    })
-    // .then(res => res.json())
-    // .then(empresas => {
-    //   empresas.forEach(e => {
-    //     const option = document.createElement("option");
-    //     option.value = e.empresa;
-    //     option.textContent = e.nome_empresa;
-    //     empresaSelect.appendChild(option);
-    //   });
-  
-    // Repõe seleção anterior, se existir
-    //   const guardada = localStorage.getItem("empresa");
-    //   if (guardada) {
-    //     empresaSelect.value = guardada;
-    //     empresaAtual = guardada;
-    //   }
-    // });
-
+    // Carregar lista inicial
     atualizarLista();
-  
+
     btnQr.addEventListener("click", () => {
       const qrContainer = document.getElementById("leitor-qr");
-  
+
       if (html5QrCode) {
         html5QrCode.stop().then(() => {
           qrContainer.innerHTML = "";
@@ -102,13 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         return;
       }
-  
+
       html5QrCode = new Html5Qrcode("leitor-qr");
-      const config = { fps: 10, qrbox: 250 };
-  
       html5QrCode.start(
         { facingMode: "environment" },
-        config,
+        { fps: 10, qrbox: 250 },
         (decodedText) => {
           html5QrCode.stop().then(() => {
             qrContainer.innerHTML = "";
@@ -125,39 +89,31 @@ document.addEventListener('DOMContentLoaded', () => {
         html5QrCode = null;
       });
     });
-  
+
     document.getElementById("btn-logout").addEventListener("click", () => {
       if (confirm("Deseja terminar sessão?")) {
         localStorage.removeItem("utilizador");
-        localStorage.removeItem("empresa"); // limpa também a seleção de empresa
+        localStorage.removeItem("empresa");
         location.reload();
       }
     });
-  
+
     function guardarDado(valor) {
-      if (!utilizadorAtual) {
-        alert("Utilizador não definido.");
+      if (!utilizadorAtual || !empresaAtual) {
+        alert("Utilizador ou empresa não definidos.");
         return;
       }
-  
-      const limpo = valor.replace(/^\[QR\]\s*/i, "");
-      const partes = limpo.split("|").map(p => p.trim());
-  
+
+      const partes = valor.replace(/^\[QR\]\s*/i, "").split("|").map(p => p.trim());
       if (partes.length !== 4) {
         alert("Formato inválido. Esperado: Nº | Descrição | Tipo | Empresa");
         return;
       }
-      // 🔒 Validação por empresa
-      if (!empresaAtual) {
-        alert("Por favor, selecione uma empresa antes de registar o QR code.");
-        return;
-      }
-    
       if (partes[3] !== empresaAtual) {
         alert(`O QR code pertence à empresa "${partes[3]}", mas selecionaste "${empresaAtual}".`);
         return;
       }
-  
+
       const dado = {
         numero: partes[0],
         descricao: partes[1],
@@ -166,8 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         utilizador: utilizadorAtual,
         timestamp: new Date().toISOString()
       };
-  
-      // Verificar duplicado antes de guardar
+
       fetch(`https://nyscrldksholckwexdsc.supabase.co/rest/v1/dados?numero=eq.${encodeURIComponent(dado.numero)}&utilizador=eq.${encodeURIComponent(dado.utilizador)}`, {
         headers: {
           "apikey": SUPABASE_KEY,
@@ -180,8 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
           alert(`O número "${dado.numero}" já existe para este utilizador.`);
           return;
         }
-      
-        // Se não existir, então grava
+
         fetch("https://nyscrldksholckwexdsc.supabase.co/rest/v1/dados", {
           method: "POST",
           headers: {
@@ -192,7 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
           },
           body: JSON.stringify(dado)
         })
-        .then(res => res.json())
         .then(() => atualizarLista())
         .catch(err => {
           console.error("Erro ao guardar:", err);
@@ -200,10 +153,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
     }
-  
+
     function atualizarLista() {
       lista.innerHTML = "";
-  
+
       fetch("https://nyscrldksholckwexdsc.supabase.co/rest/v1/dados?utilizador=eq." + encodeURIComponent(utilizadorAtual), {
         headers: {
           "apikey": SUPABASE_KEY,
@@ -211,14 +164,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       })
       .then(res => res.json())
-      .then(data => {
-        if (!data.length) {
+      .then(dados => {
+        if (!dados.length) {
           btnExportar.disabled = true;
           return;
         }
-  
+
         btnExportar.disabled = false;
-        data.forEach((item, i) => {
+        dados.forEach((item, i) => {
           const li = document.createElement("li");
           li.innerHTML = `
             <strong>${i + 1}</strong><br />
@@ -234,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
     }
-  
+
     btnExportar.addEventListener("click", () => {
       fetch("https://nyscrldksholckwexdsc.supabase.co/rest/v1/dados?utilizador=eq." + encodeURIComponent(utilizadorAtual), {
         headers: {
@@ -248,34 +201,30 @@ document.addEventListener('DOMContentLoaded', () => {
           alert("Não existem dados para exportar.");
           return;
         }
-  
-        const linhas = [
-          ["numero", "descricao", "tipo", "empresa", "utilizador", "timestamp"].join(";")
-        ];
-  
+
+        const linhas = [["numero", "descricao", "tipo", "empresa", "utilizador", "timestamp"].join(";")];
         dados.forEach(item => {
-          const linha = [
+          linhas.push([
             item.numero || "",
             item.descricao || "",
             item.tipo || "",
             item.empresa || "",
             item.utilizador || "-",
             item.timestamp || ""
-          ];
-          linhas.push(linha.join(";"));
+          ].join(";"));
         });
-  
+
         const blob = new Blob([linhas.join("\n")], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
-  
         const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", "registos_qr.csv");
+        link.href = url;
+        link.download = "registos_qr.csv";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
       });
     });
+
     document.addEventListener("click", (event) => {
       if (event.target.classList.contains("btn-eliminar")) {
         const id = event.target.getAttribute("data-id");
@@ -294,13 +243,6 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
       }
-      // Exemplo: evento logout
-      document.getElementById("btn-logout").addEventListener("click", () => {
-        if (confirm("Deseja terminar sessão?")) {
-          localStorage.removeItem("utilizador");
-          localStorage.removeItem("empresa");
-          location.reload();
-        }
     });
-  });
+  }
 });
