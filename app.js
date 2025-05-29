@@ -302,4 +302,5 @@ document.addEventListener('DOMContentLoaded', () => {
           location.reload();
         }
     });
+  });
 });
