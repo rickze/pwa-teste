@@ -14,7 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
   empresaSelect.addEventListener("change", (e) => {
     empresaAtual = e.target.value;
     localStorage.setItem("empresa", empresaAtual);
+     // Podes guardar em localStorage se quiseres:
+    localStorage.setItem("empresa", empresaAtual);
   });
+  // Repõe a empresa guardada, se houver
+  empresaAtual = localStorage.getItem("empresa") || "";
+  if (empresaAtual) {
+    empresaSelect.value = empresaAtual;
+  }
 
   btnQr.disabled = !utilizadorAtual;
   btnExportar.disabled = true;
