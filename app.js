@@ -11,15 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let html5QrCode;
   let empresaAtual = "";
 
-  if (utilizadorGuardado) {
-    // mostrarApp(utilizadorGuardado);
-    return; // já está autenticado, não precisa mostrar login
-    }
-    // Caso contrário, mostra o ecrã de login
-    loginScreen.style.display = "block";
+  iif (utilizadorGuardado) {
+    mostrarApp(utilizadorGuardado); // Mostra app corretamente
+  } else {
+    document.getElementById("login-screen").style.display = "block"; // Mostra login
   }
-  
-  
+    
   empresaSelect.addEventListener("change", (e) => {
     empresaAtual = e.target.value;
     localStorage.setItem("empresa", empresaAtual);
