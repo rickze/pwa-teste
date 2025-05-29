@@ -91,6 +91,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  document.getElementById("btn-logout").addEventListener("click", () => {
+    if (confirm("Deseja terminar sessão?")) {
+      localStorage.removeItem("utilizador");
+      localStorage.removeItem("empresa"); // limpa também a seleção de empresa
+      location.reload();
+    }
+  });
+
   function guardarDado(valor) {
     if (!utilizadorAtual) {
       alert("Utilizador não definido.");
