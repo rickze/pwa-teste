@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // Caso contrário, mostra o ecrã de login
     loginScreen.style.display = "block";
-  });
+  }
   
   
   empresaSelect.addEventListener("change", (e) => {
