@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loginScreen.style.display = "none";
         alterarPwScreen.style.display = "block";
       } else {
-        mostrarApp(user.user);
+         location.reload(); // Força o carregamento completo da app com os dados
       }
     });
   });
