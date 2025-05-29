@@ -5,9 +5,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const usernameGuardado = localStorage.getItem("utilizador");
   const empresaGuardada = localStorage.getItem("empresa");
 
-  if (!usernameGuardado) {
+  if (usernameGuardado) {
+    // só agora que o DOM está pronto, chamamos mostrarApp
+    mostrarApp(usernameGuardado, empresaGuardada);
+  } else {
+    // mostra o login
     document.getElementById("login-screen").style.display = "block";
-    return;
   }
 
   mostrarApp(usernameGuardado, empresaGuardada);
