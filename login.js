@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const password = document.getElementById("login-password").value.trim();
     const hashed = await hashPassword(password);
 
+    console.log("Username a procurar:", username);
     fetch(`${SUPABASE_URL}/rest/v1/utilizadores?user=eq.${encodeURIComponent(username)}&select=*`, {
       headers: {
         "apikey": SUPABASE_KEY,
