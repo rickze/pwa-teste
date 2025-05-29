@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let empresaAtual = "";
 
   if (utilizadorGuardado) {
-    mostrarApp(utilizadorGuardado);
+    // mostrarApp(utilizadorGuardado);
     return; // já está autenticado, não precisa mostrar login
     }
     // Caso contrário, mostra o ecrã de login
