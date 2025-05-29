@@ -10,6 +10,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
   let html5QrCode;
   let empresaAtual = "";
+
+  if (utilizadorGuardado) {
+    mostrarApp(utilizadorGuardado);
+    return; // já está autenticado, não precisa mostrar login
+    }
+    // Caso contrário, mostra o ecrã de login
+    loginScreen.style.display = "block";
+  });
+  
   
   empresaSelect.addEventListener("change", (e) => {
     empresaAtual = e.target.value;
