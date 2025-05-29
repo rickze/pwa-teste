@@ -6,8 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const SUPABASE_AUT = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODM1NDcwMywiZXhwIjoyMDYzOTMwNzAzfQ.nd9SNwTR8v-jkkEy3uCobiBF0srzo2_ndv71PG7qL5M";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55c2NybGRrc2hvbGNrd2V4ZHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTQ3MDMsImV4cCI6MjA2MzkzMDcwM30.UyF6P7j2b7tdRanWWj6T58haubt2IYiLhmx6xnwYXpE";
-  
+  const empresaSelect = document.getElementById("empresa-select");
+    
   let html5QrCode;
+  let empresaAtual = "";
+  
+  empresaSelect.addEventListener("change", (e) => {
+    empresaAtual = e.target.value;
+    localStorage.setItem("empresa", empresaAtual);
+  });
 
   btnQr.disabled = !utilizadorAtual;
   btnExportar.disabled = true;
@@ -16,6 +23,29 @@ document.addEventListener('DOMContentLoaded', () => {
     console.warn("Utilizador não autenticado.");
     return;
   }
+  // Preencher dropdown com empresas
+  fetch("https://nyscrldksholckwexdsc.supabase.co/rest/v1/empresas?select=empresa,nome_empresa", {
+    headers: {
+      "apikey": SUPABASE_KEY,
+      "Authorization": SUPABASE_AUT
+    }
+  })
+  .then(res => res.json())
+  .then(empresas => {
+    empresas.forEach(e => {
+      const option = document.createElement("option");
+      option.value = e.empresa;
+      option.textContent = e.nome_empresa;
+      empresaSelect.appendChild(option);
+    });
+  
+    // Repõe seleção anterior, se existir
+    const guardada = localStorage.getItem("empresa");
+    if (guardada) {
+      empresaSelect.value = guardada;
+      empresaAtual = guardada;
+    }
+  });
 
   atualizarLista();
 
