@@ -1,52 +1,85 @@
-
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Leitor QR - Login</title>  
-  <link rel="icon" href="favicon.png" type="image/png" />
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#ffffff" />
-  <script src="html5-qrcode.min.js"></script>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport" 
+    content="width=device-width, initial-scale=1.0">
+  <title>App Modular QR</title>
+  <link 
+    rel="manifest" 
+    href="manifest.json">
+  <link 
+    rel="stylesheet" 
+    href="style.css">
 </head>
 <body>
   <div id="login-screen">
     <h2>Login</h2>
-    <input type="text" id="login-username" placeholder="Utilizador" required />
-    <input type="password" id="login-password" placeholder="Palavra-passe" required />
+    <input 
+      type="text" 
+      id="login-username" 
+      name="login-username" 
+      placeholder="Utilizador">
+    <input type="password" 
+      id="login-password" 
+      name="login-password" 
+      placeholder="Palavra-passe">
     <button id="login-btn">Entrar</button>
   </div>
 
-  <div id="alterar-password-screen" style="display: none;">
-    <h2>Alterar palavra-passe</h2>
-    <p id="user-display"></p>
-    <input type="password" id="nova-password" placeholder="Nova palavra-passe" required />
-    <input type="password" id="confirmar-password" placeholder="Confirmar nova palavra-passe" required />
+  <div id="alterar-password-screen" style="display:none;">
+    <h2>Nova palavra-passe</h2>
+    <input 
+      type="password" 
+      id="nova-password" 
+      name="nova-password" 
+      placeholder="Nova password">
+    <input 
+      type="password" 
+      id="confirmar-password" 
+      name="confirmar-password" 
+      placeholder="Confirmar password">
     <button id="guardar-nova-password">Guardar</button>
   </div>
 
-  <div id="app" style="display: none;">
+  <div id="app" style="display:none;">
     <h1>Leitor de QR Code</h1>
-    <div id="topo-app">
-      <span id="utilizador-logado">Utilizador: admin</span>
+    <div class="header">
+      <span id="utilizador-logado"></span>
       <button id="btn-logout">Sair</button>
     </div>
-    <div id="selecionar-empresa">
-      <label for="empresa-select"><b>Empresa:</b></label>
-      <select id="empresa-select">
-        <option value="">Selecione a empresa</option>
-      </select>
-    </div>
-    <div id="leitor-qr" style="width: 300px;"></div>
-    <button id="btn-qr">Ler QR Code</button><br />
-    <button id="btn-exportar">Exportar para CSV</button>
-    <h2>Dados Guardados:</h2>
-    <ul id="lista-dados"></ul>
+
+    <label for="empresa-select">Empresa:</label>
+    <input 
+      id="empresa-select" 
+      name="empresa-select" 
+      list="empresas-list" 
+      placeholder="Procure ou selecione uma empresa" aria-label="Selecionar empresa">
+    
+    <datalist id="empresas-list"></datalist>
+    
+    <button 
+      id="btn-qr" 
+      aria-label="Ler ou parar leitura de QR Code">Ler QR Code</button>
+    <button 
+      id="btn-exportar" 
+      aria-label="Exportar registos para CSV">Exportar</button>
+    <button 
+      id="btn-eliminar-selecionados" 
+      aria-label="Eliminar registos selecionados">Eliminar Selecionados</button>
+    <div 
+      id="status" 
+      aria-live="polite" 
+      style="margin-top:10px;color:#007bff;"></div>
+    <div 
+      id="leitor-qr" 
+      style="margin: 10px 0;"></div>
+    <div id="lista-dados"></div>
   </div>
 
-  <script src="login.js"></script>
-  <script src="app.js"></script>
+  <script src="html5-qrcode.min.js"></script>
+  <script type="module" src="login.js"></script>
+	<script type="module" src="app.js"></script>
 </body>
 </html>

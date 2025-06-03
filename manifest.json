@@ -1,6 +1,6 @@
 {
-  "name": "PWA Teste Local",
-  "short_name": "PWA Teste",
+  "name": "Leitor QR Code",
+  "short_name": "QR Code",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
