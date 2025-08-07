@@ -2,3 +2,5 @@ Iniciar servidor:
 
 Iniciar servidor nesta pasta
 Comando: python -m http.server
+
+Site offline : https://rickze.github.io/pwa-teste/
